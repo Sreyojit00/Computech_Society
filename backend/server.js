@@ -21,6 +21,11 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+  console.log("👉 API HIT:", req.method, req.url);
+  next();
+});
+
 // Routes
 app.use("/api", enquiryRoutes);
 
