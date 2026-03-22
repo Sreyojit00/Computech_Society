@@ -10,7 +10,15 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "*", 
+}));
+
+app.use((req, res, next) => {
+  console.log("👉 API HIT:", req.method, req.url);
+  next();
+});
+
 app.use(express.json());
 
 // Routes
