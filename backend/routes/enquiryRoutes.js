@@ -3,6 +3,7 @@ const { createEnquiry } = require("../controllers/enquiryController");
 
 const router = express.Router();
 
-router.post("/enquiry", createEnquiry);
+router.post("/enquiry", createEnquiry);       // Save form data
+   // Get all data (admin)
 
 module.exports = router;
