@@ -11,7 +11,7 @@ const app = express();
 // ✅ Middleware
 app.use(cors({
   origin: [
-    "https://computechsociety.netlify.app/"
+    "https://computechsociety.netlify.app"
   ]
 }));
 
