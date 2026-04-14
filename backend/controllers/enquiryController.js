@@ -4,7 +4,7 @@ const SibApiV3Sdk = require("sib-api-v3-sdk");
 // Initialize Brevo API once (outside function)
 const client = SibApiV3Sdk.ApiClient.instance;
 const apiKey = client.authentications["api-key"];
-apiKey.apiKey = process.env.BREVO_API_KEY; // ✅ use correct variable name
+apiKey.apiKey = process.env.BREVO_PASS; // ✅ use correct variable name
 
 const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
@@ -56,7 +56,7 @@ const createEnquiry = async (req, res) => {
 // ✅ Email Sender Function
 const sendEmail = async ({ name, phone, email, message }) => {
   try {
-    if (!process.env.BREVO_API_KEY) {
+    if (!process.env.BREVO_PASS) {
       console.error("❌ Brevo API key missing");
       return;
     }
