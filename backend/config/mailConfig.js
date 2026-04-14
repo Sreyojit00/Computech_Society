@@ -1,14 +1,11 @@
-require("dotenv").config();
-const nodemailer = require("nodemailer");
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.BREVO_USER,
-    pass: process.env.BREVO_PASS,
-  },
-});
+// Initialize Brevo API
+const client = SibApiV3Sdk.ApiClient.instance;
 
-module.exports = transporter;
+const apiKey = client.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_PASS;
+
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+module.exports = apiInstance;
