@@ -1,7 +1,9 @@
 const Enquiry = require("../models/enquiryModel");
-const transporter = require("../config/mailConfig");
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
 const createEnquiry = async (req, res) => {
+  console.log("🔥 API HIT: POST /api/enquiry");
+
   try {
     const { name, phone, email, message } = req.body;
 
@@ -21,30 +23,15 @@ const createEnquiry = async (req, res) => {
       message,
     });
 
-    // ✅ Send response FIRST (important)
+    // ✅ Send response immediately (fast API)
     res.status(201).json({
       success: true,
       message: "Enquiry submitted successfully! We will get in touch with you shortly",
       data: newEnquiry,
     });
 
-    // ✅ Send email in background (DO NOT await)
-    transporter.sendMail({
-      from: process.env.ADMIN_USER,
-      to: process.env.ADMIN_USER,
-      subject: "New Enquiry Received",
-      html: `
-        <div style="padding:20px;font-family:sans-serif;">
-          <h2>New Enquiry</h2>
-          <p><b>Name:</b> ${name}</p>
-          <p><b>Phone:</b> ${phone}</p>
-          <p><b>Email:</b> ${email || "Not Provided"}</p>
-          <p><b>Message:</b> ${message}</p>
-        </div>
-      `,
-    })
-    .then(info => console.log("📩 Email sent:", info.response))
-    .catch(err => console.log("❌ Email error:", err));
+    // ✅ Send Email using Brevo API (background)
+    sendEmail(name, phone, email, message);
 
   } catch (error) {
     console.log("🔥 ERROR:", error);
@@ -52,6 +39,48 @@ const createEnquiry = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+
+// ✅ Email Function (Brevo API)
+const sendEmail = async (name, phone, email, message) => {
+  try {
+    const client = SibApiV3Sdk.ApiClient.instance;
+
+    const apiKey = client.authentications["api-key"];
+    apiKey.apiKey = process.env.BREVO_PASS;
+
+    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+    const sendSmtpEmail = {
+      sender: {
+        email: "sreyajitlm10.5@gmail.com", // must be verified in Brevo
+        name: "Computech Society",
+      },
+      to: [
+        {
+          email: "sreyajitlm10.5@gmail.com",
+        },
+      ],
+      subject: "📩 New Enquiry Received",
+      htmlContent: `
+        <div style="font-family:sans-serif;padding:20px;">
+          <h2>New Enquiry</h2>
+          <p><b>Name:</b> ${name}</p>
+          <p><b>Phone:</b> ${phone}</p>
+          <p><b>Email:</b> ${email || "Not Provided"}</p>
+          <p><b>Message:</b> ${message}</p>
+        </div>
+      `,
+    };
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
+
+    console.log("✅ Email sent via Brevo API");
+
+  } catch (err) {
+    console.log("❌ Email API error:", err.response?.body || err.message);
   }
 };
 
