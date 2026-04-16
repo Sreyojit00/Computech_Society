@@ -63,12 +63,12 @@ const sendEmail = async ({ name, phone, email, message }) => {
 
     const emailData = {
       sender: {
-        email: "26tatai2016@gmail.com", // must be verified in Brevo
+        email: "sumanachakraborty2005@gmail.com", // must be verified in Brevo
         name: "Computech Society",
       },
       to: [
         {
-          email: "26tatai2016@gmail.com",
+          email: "sumanachakraborty2005@gmail.com",
         },
       ],
       subject: "📩 New Enquiry Received",
